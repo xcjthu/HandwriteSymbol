@@ -1,24 +1,10 @@
 import logging
+from .ImgFormatter import ImgFormatter
 
-from .Basic import BasicFormatter
-from .RTEFormatter import RTEFormatter
-from .RTEPromptFormatter import RTEPromptFormatter
-from .RTEPromptRobertaFormatter import RTEPromptRobertaFormatter
-from .SST2PromptFormatter import SST2PromptFormatter
-from .SST2PromptRobertaFormatter import SST2PromptRobertaFormatter
-from .WikiREFormatter import WikiREFormatter
-from .WikiREPromptFormatter import WikiREPromptFormatter
 logger = logging.getLogger(__name__)
 
 formatter_list = {
-    "Basic": BasicFormatter,
-    "RTE": RTEFormatter,
-    "RTEPrompt": RTEPromptFormatter,
-    "RTEPromptRoberta": RTEPromptRobertaFormatter,
-    "SST2Prompt": SST2PromptFormatter,
-    "SST2_PromptRoberta": SST2PromptRobertaFormatter,
-    "RE": WikiREFormatter,
-    "REPrompt": WikiREPromptFormatter,
+    "img": ImgFormatter,
 }
 
 

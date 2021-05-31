@@ -2,14 +2,16 @@ import torch.optim as optim
 from transformers import AdamW
 import torch
 def get_params_for_prompt_optimization(module: torch.nn.Module):
+    # params = [{"params": [], "lr": 1e-3}, {"params": [], "lr": 1e-5}]
     params = []
     for t in module.named_modules():
-        # print(t[0])
         if "prompt" in t[0]:
+            # params[0]["params"].extend([p for p in list(t[1]._parameters.values()) if p is not None])
             params.append({'params': [p for p in list(t[1]._parameters.values()) if p is not None]})
+        # else:
+        #     params[1]["params"].extend([p for p in list(t[1]._parameters.values()) if p is not None])
+        #     # params.append({'params': [p for p in list(t[1]._parameters.values()) if p is not None]})
 
-    # if torch.distributed.get_rank() == 0:
-    #     print("print params", params)
     return params
 
 

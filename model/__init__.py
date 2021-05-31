@@ -1,14 +1,7 @@
-from .BinaryClsBERT import BinaryClsBERT,PromptClsBERT
-from .PromptRoberta import PromptRoberta
-from .REBERT import REBERT
-from .REPromptRoberta import REPromptRoberta
+from .ImgModel import ImgCNN, ImgMLP
 model_list = {
-    "BinaryClsBERT": BinaryClsBERT,
-    "RTEPrompt": PromptClsBERT,
-    "SST2Prompt": PromptClsBERT,
-    "PromptRoberta": PromptRoberta,
-    "RE": REBERT,
-    "REPrompt": REPromptRoberta,
+    "ImgCNN": ImgCNN,
+    "ImgMLP": ImgMLP,
 }
 
 def get_model(model_name):
