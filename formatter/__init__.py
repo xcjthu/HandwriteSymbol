@@ -1,6 +1,6 @@
 import logging
 from .ImgFormatter import ImgFormatter
-from .NewsRecFormatter import NewsRecFormatter
+from .NewsRec.NewsRecFormatter import NewsRecFormatter
 
 logger = logging.getLogger(__name__)
 

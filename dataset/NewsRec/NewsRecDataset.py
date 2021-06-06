@@ -31,7 +31,7 @@ class NewsRecDataset(Dataset):
         header_row = next(ireader)
         for row in ireader:
             if row[0] in itemids:
-                vec = np.array(row[1:])
+                vec = np.array([float(v) for v in row[1:]])
                 self.item2feature[row[0]] = {"vec": vec}
         itemf = open(os.path.join(self.data_path, "articles.csv"), "r")
         ifreader = csv.reader(itemf)
@@ -41,20 +41,31 @@ class NewsRecDataset(Dataset):
                 self.item2feature[row[0]]["category"] = row[1]
                 self.item2feature[row[0]]["word_count"] = row[3]
 
+        del_data = []
         for uid in self.id2seq:
+            if len(self.id2seq) <= 2:
+                del_data.append(uid)
+                continue
             for cid, click in enumerate(self.id2seq[uid]):
                 self.id2seq[uid][cid]["item_feature"] = self.item2feature[click["iid"]]
+        for uid in del_data:
+            self.id2seq.pop(uid)
         self.all_itemid = list(itemids)
 
         if mode == "train":
             for uid in self.id2seq:
                 self.id2seq[uid] = self.id2seq[uid][:-1]
+        self.data = list(self.id2seq.values())
+        print("==" * 10, mode, "==" * 10)
+        print("user num", len(self.data))
+        print("item num", len(itemids))
+
 
     def __getitem__(self, item):
         iseq = self.data[item]
         gitem = set([i["iid"] for i in iseq])
         negs = set(random.sample(self.all_itemid, 99))
-        mask = [1] + [0 if i["iid"] in gitem else 1 for i in negs]
+        mask = [1] + [0 if nid in gitem else 1 for nid in negs]
         negs = [self.item2feature[nid] for nid in negs]
         return {"seq": iseq, "negs": negs, "mask": mask}
 

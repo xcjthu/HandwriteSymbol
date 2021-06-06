@@ -1,9 +1,7 @@
 import torch
 import json
 import numpy as np
-from torch import tensor
-from torch._C import long
-from .Basic import BasicFormatter
+from formatter.Basic import BasicFormatter
 
 class NewsRecFormatter(BasicFormatter):
     def __init__(self, config, mode, *args, **params):
@@ -20,7 +18,7 @@ class NewsRecFormatter(BasicFormatter):
         category = [self.label2id["label2id"]["category"][i["category"]] for i in iseq]
         if max_len is not None and len(embs) < max_len:
             embs += [np.zeros(250)] * (max_len - len(embs))
-            category += [self.label2id["label2id"]["category"]["PAD"]] * (max_len - len(embs))
+            category += [self.label2id["label2id"]["category"]["PAD"]] * (max_len - len(category))
         return embs, category
 
     def process(self, data, config, mode, *args, **params):
@@ -48,7 +46,7 @@ class NewsRecFormatter(BasicFormatter):
             inpseq = seq[:-1]
             # 点击的特征序列
             for fid, feat in enumerate(self.features):
-                fseq = [self.label2id["label2id"][feat][click["feat"][feat]] for click in inpseq]
+                fseq = [self.label2id["label2id"][feat][click[feat]] for click in inpseq]
                 if len(fseq) < self.max_len:
                     fseq += [self.label2id["label2id"][feat]["PAD"]] * (self.max_len - len(fseq))
                 click_feature[fid].append(fseq)
@@ -61,7 +59,7 @@ class NewsRecFormatter(BasicFormatter):
             inpseqs.append(iseq)
 
             # 输入的新闻序列
-            iemb, icate = self.encode_item_seq([i["item_feature"] for i in inpseq])
+            iemb, icate = self.encode_item_seq([i["item_feature"] for i in inpseq], max_len=self.max_len)
             news_emb.append(iemb)
             news_category.append(icate)
 
@@ -77,7 +75,7 @@ class NewsRecFormatter(BasicFormatter):
             "clickf": torch.tensor(click_feature, dtype=torch.long),
             "news_emb": torch.tensor(news_emb, dtype=torch.float),
             "news_category": torch.tensor(news_category, dtype=torch.long),
-            "cand_emb": torch.tensor(cand_emb),
+            "cand_emb": torch.tensor(cand_emb, dtype=torch.float),
             "cand_category": torch.tensor(cand_category, dtype=torch.long),
             "inpmask": torch.tensor(inpmask, dtype=torch.long),
             "labelmask": torch.tensor([user["mask"] for user in data], dtype=torch.long)
