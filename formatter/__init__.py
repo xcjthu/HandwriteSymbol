@@ -1,10 +1,12 @@
 import logging
 from .ImgFormatter import ImgFormatter
+from .NewsRecFormatter import NewsRecFormatter
 
 logger = logging.getLogger(__name__)
 
 formatter_list = {
     "img": ImgFormatter,
+    "NewsRec": NewsRecFormatter
 }
 
 

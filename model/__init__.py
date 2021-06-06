@@ -1,7 +1,9 @@
 from .ImgModel import ImgCNN, ImgMLP
+from .Bert4Rec import Bert4Rec
 model_list = {
     "ImgCNN": ImgCNN,
     "ImgMLP": ImgMLP,
+    "BERT4Rec": Bert4Rec
 }
 
 def get_model(model_name):
