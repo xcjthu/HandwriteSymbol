@@ -115,11 +115,12 @@ def acc(score, acc_result):
 
 def IRMetric(score, acc_result):
     if acc_result is None:
-        acc_result = {'total': 0, 'P@1/NDCG@1': 0, 'mrr': 0.0, "NDCG@10": 0.0, "P@10": 0}
+        acc_result = {'total': 0, 'mrr': 0.0, 'HR@1': 0, "HR@5": 0, "HR@10": 0, "HR@20": 0, "HR@50": 0}#, "NDCG@10": 0.0}
     rank = (-score).argsort().argsort()[:,0]
     acc_result["mrr"] += float((1 / (rank.float() + 1.0)).sum())
-    acc_result["P@10"] += int((rank < 10).sum())
-    acc_result["P@1/NDCG@1"] += int((rank == 0).sum())
-    acc_result["NDCG@10"] += float((1 / torch.log2(rank.float() + 2.0)).sum())
+    for k in [5, 10, 20, 50]:
+        acc_result["HR@%s" % k] += int((rank < k).sum())
+    acc_result["HR@1"] += int((rank == 0).sum())
+    # acc_result["NDCG@10"] += float((1 / torch.log2(rank.float() + 2.0)).sum())
     acc_result["total"] += rank.shape[0]
     return acc_result
