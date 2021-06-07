@@ -10,7 +10,11 @@ def acc_output_function(data, config, *args, **params):
     if data['total'] == 0:
         return 0
     else:
-        return json.dumps({'acc': round(data['right'] / data['total'], 4)})
+        ret = {}
+        for key in data:
+            if key != "total":
+                ret[key] = round(data[key] / data["total"], 4)
+        return json.dumps(ret)
 
 
 def basic_output_function(data, config, *args, **params):

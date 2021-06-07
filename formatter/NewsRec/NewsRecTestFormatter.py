@@ -3,7 +3,7 @@ import json
 import numpy as np
 from formatter.Basic import BasicFormatter
 
-class NewsRecFormatter(BasicFormatter):
+class NewsRecTestFormatter(BasicFormatter):
     def __init__(self, config, mode, *args, **params):
         self.config = config
         self.mode = mode
@@ -39,12 +39,7 @@ class NewsRecFormatter(BasicFormatter):
         inpmask = []
 
         for user in data:
-            if len(user["seq"]) > self.max_len:
-                seq = user["seq"][-self.max_len:]
-            else:
-                seq = user["seq"]
-
-            inpseq = seq[:-1]
+            inpseq = user["seq"][-self.max_len:]
             # 点击的特征序列
             for fid, feat in enumerate(self.features):
                 fseq = [self.label2id["label2id"][feat][click[feat]] for click in inpseq]
@@ -65,13 +60,10 @@ class NewsRecFormatter(BasicFormatter):
             news_category.append(icate)
 
             # 候选新闻的特征序列
-            golden = seq[-1]
-            allcand = [golden["item_feature"]] + user["negs"]
+            allcand = user["cand"]
             cemb, ccate = self.encode_item_seq(allcand)
             cand_emb.append(cemb)
             cand_category.append(ccate)
-            cidseq = [self.item2id[c["iid"]] for c in allcand]
-            cand_ids.append(cidseq)
 
         ret = {
             "inpseq": torch.tensor(inpseqs, dtype=torch.long),
@@ -80,9 +72,9 @@ class NewsRecFormatter(BasicFormatter):
             "news_category": torch.tensor(news_category, dtype=torch.long),
             "cand_emb": torch.tensor(cand_emb, dtype=torch.float),
             "cand_category": torch.tensor(cand_category, dtype=torch.long),
-            "cand_ids": torch.tensor(cand_ids, dtype=torch.long),
             "inpmask": torch.tensor(inpmask, dtype=torch.long),
-            "labelmask": torch.tensor([user["mask"] for user in data], dtype=torch.long)
+            "cid": [d["candids"] for d in data],
+            "uid": [d["uid"] for d in data],
         }
 
         return ret
